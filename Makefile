@@ -11,7 +11,7 @@ all: ## Builds and provisions all VMs required for testing workstation
 	./scripts/configure-environment --env dev
 	$(MAKE) validate
 	$(MAKE) prep-salt
-	./scripts/provision-all
+	securedrop-admin --apply
 
 dev: all ## Builds and provisions all VMs required for testing workstation
 
@@ -76,9 +76,6 @@ sd-log: prep-salt ## Provisions SD logging VM
 	sudo qubesctl --show-output state.sls sd-log
 	sudo qubesctl --show-output --skip-dom0 --targets sd-log-buster-template,sd-log state.highstate
 
-clean-salt: assert-dom0 ## Purges SD Salt configuration from dom0
-	@./scripts/clean-salt
-
 prep-salt: assert-dom0 ## Configures Salt layout for SD workstation VMs
 	@./scripts/prep-salt
 	@./scripts/validate_config.py
@@ -111,7 +108,6 @@ clean: assert-dom0 prep-salt ## Destroys all SD VMs
 	sudo qubesctl --show-output --skip-dom0 --targets whonix-gw-15 state.sls sd-clean-whonix
 	sudo qubesctl --show-output state.sls sd-clean-all
 	sudo dnf -y -q remove securedrop-workstation-dom0-config 2>/dev/null || true
-	$(MAKE) clean-salt
 
 test: assert-dom0 ## Runs all application tests (no integration tests yet)
 	python3 -m unittest discover -v tests

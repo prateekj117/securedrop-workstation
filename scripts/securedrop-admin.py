@@ -115,9 +115,6 @@ def perform_uninstall():
         subprocess.check_call(
             ["sudo", "qubesctl", "state.sls", "sd-clean-all"]
         )
-        subprocess.check_call(
-            [os.path.join(SCRIPTS_PATH, "scripts/clean-salt")]
-        )
         print("Uninstalling Template")
         subprocess.check_call(
             ["sudo", "dnf", "-y", "-q", "remove", "qubes-template-securedrop-workstation-buster"]
